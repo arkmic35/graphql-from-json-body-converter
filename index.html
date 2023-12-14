@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphQL from JSON body converter</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+    <h1>JSON request payload to GraphQL converter</h1>
+</header>
+
+<main>
+    <p>There are cases when you try to debug GraphQL request. In web browser's dev tools you get an ugly minified JSON
+        payload.
+        When you try to do troubleshooting, you may prefer pretty GraphQL payload. This tool will perform the
+        beautification.</p>
+
+    <label for="input-json-request">JSON request payload:</label>
+    <textarea id="input-json-request" placeholder="Paste your JSON request payload..." rows="5"></textarea>
+
+    <button id="input-apply-example-1">Try with example request</button>
+    <button id="convert-1">Convert</button>
+
+    <div id="output" style="display: none">
+        <label for="output-query">Query:</label>
+        <textarea id="output-query" rows="20"></textarea>
+
+        <label for="output-variables">Variables:</label>
+        <textarea id="output-variables" rows="10"></textarea>
+    </div>
+
+    <p>Privacy notice: no data is sent anywhere. The conversion process happens in your web browser.</p>
+</main>
+
+<footer>
+    <p>Created by <a href="https://github.com/arkmic35">Arkadiusz Michalak</a></p>
+</footer>
+
+<script>
+    $(document).ready(function () {
+        const handleConvert = function () {
+            const input = $('#input-json-request').val();
+            const json = JSON.parse(input);
+            const query = json.query;
+            const variables = json.variables || {};
+
+            $('#output').show();
+            $('#output-query').val(query);
+            $('#output-variables').val(JSON.stringify(variables, null, 2));
+        };
+
+        const handleTry = function () {
+            $('#input-json-request').val(`{"query":"query AMAZON_PRODUCT($asin: String!) {\\n  amazonProduct(input: {asinLookup: {asin: $asin}}) {\\n    title\\n    brand\\n    mainImageUrl\\n    ratingsTotal\\n    rating\\n    price {\\n      display\\n    }\\n  }\\n}","variables":{"asin":"B0BDHWDR12"},"operationName":"AMAZON_PRODUCT","extensions":{}}`);
+            handleConvert();
+        }
+
+        $('#input-apply-example-1').click(handleTry);
+        $('#convert-1').click(handleConvert);
+    });
+</script>
+
+</body>
+</html>
